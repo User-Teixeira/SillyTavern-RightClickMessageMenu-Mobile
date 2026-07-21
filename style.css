@@ -31,3 +31,29 @@ This keeps them hidden.
 #right_click_message_menu .mes_button {
     filter: none !important;
 }
+
+/*
+ * Popup animation for the right-click message menu.
+ *
+ * The menu element is created once and reused (see update_menu() in index.js),
+ * so instead of jQuery's .show()/.hide() (display:none <-> display:block, which
+ * cannot be transitioned), the JS toggles the "rcmm_visible" class and this
+ * transition animates opacity + a slight scale-up.
+ *
+ * If you already have a style.css for this extension, just append this block
+ * to it instead of replacing the whole file.
+ */
+
+#right_click_message_menu {
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95);
+    transform-origin: top left;
+    transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+}
+
+#right_click_message_menu.rcmm_visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}

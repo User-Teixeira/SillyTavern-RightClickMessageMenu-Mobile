@@ -239,6 +239,7 @@ const vertical_menu_class = "right_click_message_menu_vertical"
 const horizontal_menu_class = "right_click_message_menu_horizontal"
 const horizontal_item_class = "right_click_message_menu_item"
 const hide_buttons_class = "force_hidden"
+const menu_visible_class = "rcmm_visible"
 const button_name_map = {  // mapping for some default button names
     "Exclude message from prompts": "Exclude from prompts"
 }
@@ -393,7 +394,7 @@ function update_menu(message_div, edit=false) {
     debug("Updating menu")
     $menu = $(`#${menu_id}`)
     if ($menu.length === 0) {  // not initialized yet
-        $menu = $(`<div id="${menu_id}" class="options-content popup" style="position: absolute; width: unset; display: none;"></div>`)
+        $menu = $(`<div id="${menu_id}" class="options-content popup" style="position: absolute; width: unset;"></div>`)
         $('body').append($menu)
     } else {  // already initialized - clear it
         $menu.empty()
@@ -483,7 +484,9 @@ function handle_interaction(e) {
     let textbox = $(message_block).find('textarea.edit_textarea')
     update_menu(message, textbox.length > 0)
     set_menu_position(pageX, pageY)
-    $menu.show();
+    // Use a class instead of .show() so a CSS transition (opacity/transform)
+    // can animate the popup in. See style.css for the animation itself.
+    $menu.addClass(menu_visible_class);
 }
 function init_menu() {
     // When you right-click a message, show the context menu
@@ -511,9 +514,13 @@ function init_menu() {
     // Hide menu on click anywhere else
     $(document).on("click", function() {
         if (get_settings('menu_mode') === 'disabled') return
-        if (!$menu?.is(":visible")) return
+        // NOTE: we check the visibility class here rather than jQuery's :visible
+        // selector. :visible only checks display/layout, not opacity or
+        // visibility, so it would always report "visible" once we switched to
+        // a CSS opacity/visibility-based show/hide transition.
+        if (!$menu?.hasClass(menu_visible_class)) return
         debug("Hiding menu")
-        $menu.hide()
+        $menu.removeClass(menu_visible_class)
     });
 }
 
