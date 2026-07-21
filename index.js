@@ -383,11 +383,11 @@ function toggle_message_buttons() {
     // Show/hide all message buttons
     let hide = get_settings('hide_message_buttons')
     if (hide) {
-        $('.mes_buttons, .mes_edit_buttons').addClass(hide_buttons_class)
+        // Removed .mes_edit_buttons from the selector to keep edit buttons visible
+        $('.mes_buttons').addClass(hide_buttons_class)
     } else {
-        $('.mes_buttons, .mes_edit_buttons').removeClass(hide_buttons_class)
+        $('.mes_buttons').removeClass(hide_buttons_class)
     }
-
 }
 function update_menu(message_div, edit=false) {
     // Update the menu from the buttons on the given message div
