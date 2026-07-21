@@ -12,9 +12,9 @@ const MODULE_NAME_FANCY = 'RCMM';
 // Settings
 const default_settings = {
     // inclusion criteria
-    menu_mode: 'vertical',  // default vertical
+    menu_mode: 'horizontal',  // default horizontal
     debug_mode: false,
-    max_width_horizontal: 220,
+    max_width_horizontal: 215,
     hide_message_buttons: false,
 };
 const settings_ui_map = {}  // map of settings to UI elements
