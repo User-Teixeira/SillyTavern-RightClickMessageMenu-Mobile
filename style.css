@@ -27,3 +27,7 @@ This keeps them hidden.
 .force_hidden {
     display: none !important;
 }
+
+#right_click_message_menu .mes_button {
+    filter: none !important;
+}
