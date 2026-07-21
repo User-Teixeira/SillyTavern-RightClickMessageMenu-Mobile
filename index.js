@@ -302,21 +302,75 @@ function get_edit_buttons($message_div) {
     let buttons = $message_div.find(".mes_edit_buttons .menu_button").toArray()
     return $(buttons)
 }
+
+/**
+ * Given a native/jQuery event, extract page coordinates that work for both
+ * mouse events (contextmenu) and touch events (touchend), since TouchEvent
+ * objects don't carry pageX/pageY on themselves.
+ * @param e {Event|jQuery.Event} the interaction event
+ * @returns {{x: number, y: number}}
+ */
+function get_event_coordinates(e) {
+    // jQuery normalizes some events, but touch coordinates still live inside
+    // the original browser event's touch lists, not on the jQuery event itself.
+    let orig = e.originalEvent || e;
+
+    // Mouse / pointer events: pageX/pageY are directly available
+    if (typeof e.pageX === 'number' && typeof e.pageY === 'number') {
+        return {x: e.pageX, y: e.pageY};
+    }
+    if (typeof orig.pageX === 'number' && typeof orig.pageY === 'number') {
+        return {x: orig.pageX, y: orig.pageY};
+    }
+
+    // Touch events: coordinates are in changedTouches/touches
+    let touch = (orig.changedTouches && orig.changedTouches[0])
+              || (orig.touches && orig.touches[0])
+              || (e.changedTouches && e.changedTouches[0])
+              || (e.touches && e.touches[0]);
+    if (touch) {
+        return {x: touch.pageX, y: touch.pageY};
+    }
+
+    // Fallback - nothing usable found
+    debug("Could not determine event coordinates from event:", e);
+    return {x: undefined, y: undefined};
+}
+
 function set_menu_position(mouse_x, mouse_y) {
     // Given the mouse position, calculate the menu position (to keep it within the screen)
     let x_pos = mouse_x
     let y_pos = mouse_y
     let rect = $menu[0].getBoundingClientRect()
 
+    // Use the actual viewport size (works correctly on mobile), not the
+    // physical screen resolution (window.screen.width/height), which can be
+    // very different from the visible viewport on mobile devices.
+    let viewport_width = window.innerWidth
+    let viewport_height = window.innerHeight
+
+    // If we somehow didn't get valid coordinates, fall back to the center of
+    // the screen instead of leaving the menu at its default (0,0) position.
+    if (typeof x_pos !== 'number' || isNaN(x_pos)) {
+        x_pos = viewport_width / 2 - rect.width / 2
+    }
+    if (typeof y_pos !== 'number' || isNaN(y_pos)) {
+        y_pos = viewport_height / 2 - rect.height / 2
+    }
+
     // If the menu would overflow to the right, instead appear on the left
-    if (x_pos + rect.width > window.screen.width) {
+    if (x_pos + rect.width > viewport_width) {
         x_pos = mouse_x - rect.width
     }
 
     // If the menu would overflow off the bottom, instead appear above
-    if (y_pos + rect.height > window.screen.height) {
+    if (y_pos + rect.height > viewport_height) {
         y_pos = mouse_y - rect.height
     }
+
+    // Clamp to viewport in case both fallback branches above still leave it out of bounds
+    x_pos = Math.max(0, Math.min(x_pos, viewport_width - rect.width))
+    y_pos = Math.max(0, Math.min(y_pos, viewport_height - rect.height))
 
     $menu.css({
         left: x_pos + "px",
@@ -411,10 +465,15 @@ function handle_interaction(e) {
     let message_block = e.currentTarget.parentNode
     let message = message_block.parentNode
 
+    // Extract coordinates in a way that works for both mouse (contextmenu)
+    // and touch (touchend) events - fixes the menu always appearing in the
+    // top-left corner on mobile.
+    let {x: pageX, y: pageY} = get_event_coordinates(e)
+
     // check if the message is currently being edited
     let textbox = $(message_block).find('textarea.edit_textarea')
     update_menu(message, textbox.length > 0)
-    set_menu_position(e.pageX, e.pageY)
+    set_menu_position(pageX, pageY)
     $menu.show();
 }
 function init_menu() {
