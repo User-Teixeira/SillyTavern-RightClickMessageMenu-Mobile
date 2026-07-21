@@ -432,6 +432,15 @@ function update_menu(message_div, edit=false) {
 
         let icon_classes = [...button.classList].filter(cls => cls.startsWith('fa-'))  // get any FA classes (the icon)
         let $icon_svg = $button.find("svg")  // icons might have been added using an svg
+        // If the parent element has no icon classes and there is no SVG, check for a child <i> tag
+        if (icon_classes.length === 0 && $icon_svg.length === 0) {
+            let $icon_i = $button.find("i").first()
+            if ($icon_i.length) {
+                // Instead of taking all classes from the <i> tag, extract only the actual icon classes starting with 'fa-'
+                icon_classes = [...$icon_i[0].classList].filter(cls => cls.startsWith('fa-'))
+            }
+        }
+
         let tooltip = $button.prop('title') || $button.attr('data-sttt--title')  // the tooltip on the button (with compatability for the tooltips ext)
 
         let $menu_item;
