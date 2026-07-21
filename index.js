@@ -501,7 +501,7 @@ function init_menu() {
       let current_time = new Date().getTime();
       let tap_length = current_time - last_tap;
 
-      if (tap_length < 300 && tap_length > 0) {
+      if (tap_length < 250 && tap_length > 0) {
         if (get_settings('double_tap')) {
             handle_interaction(e)
         }
