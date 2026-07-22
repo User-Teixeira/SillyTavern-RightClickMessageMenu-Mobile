@@ -16,6 +16,8 @@ const default_settings = {
     debug_mode: false,
     max_width_horizontal: 215,
     hide_message_buttons: false,
+    double_tap: false,
+    double_tap_delay: 250,  // max ms between taps to count as a double-tap
 };
 const settings_ui_map = {}  // map of settings to UI elements
 
@@ -500,8 +502,9 @@ function init_menu() {
     $(document).on('touchend', 'div.mes_block div.mes_text', function(e) {
       let current_time = new Date().getTime();
       let tap_length = current_time - last_tap;
+      let max_tap_length = get_settings('double_tap_delay');
 
-      if (tap_length < 250 && tap_length > 0) {
+      if (tap_length < max_tap_length && tap_length > 0) {
         if (get_settings('double_tap')) {
             handle_interaction(e)
         }
@@ -541,6 +544,7 @@ jQuery(async function () {
     bind_setting('#max_width', 'max_width_horizontal', 'number');
     bind_setting('#hide_message_buttons', 'hide_message_buttons', 'boolean', toggle_message_buttons);
     bind_setting('#double_tap', 'double_tap', 'boolean');
+    bind_setting('#double_tap_delay', 'double_tap_delay', 'number');
     bind_setting('#debug_mode', 'debug_mode', 'boolean');
     refresh_settings()
 

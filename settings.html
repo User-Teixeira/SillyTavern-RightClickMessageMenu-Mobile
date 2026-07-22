@@ -35,7 +35,12 @@
                 <span>Enable Double-Tap</span>
             </label>
 
-            <label class="checkbox_label" title="Additional outputs for debugging">
+            <label class="checkbox_label" title="Maximum time (in milliseconds) between two taps for them to be recognized as a double-tap">
+                <input id="double_tap_delay" class="text_pole widthUnset inline_setting" type="number" min="50" max="2000" step="10" />
+                <span>Double-Tap Speed (ms)</span>
+            </label>
+
+            <label class="checkbox_label" title="Additional outputs for debugging" style="display:none">
                 <input id="debug_mode" type="checkbox">
                 <span>Debug Mode</span>
             </label>
