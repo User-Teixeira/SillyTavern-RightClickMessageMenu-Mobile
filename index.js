@@ -251,9 +251,9 @@ const menu_visible_class = "rcmm_visible"
 // Example: put the cat-translator's edit button first, then translate, then revert:
 const button_order_overrides = [
     ".mes_edit",            // Edit (기본 연필)
-    ".cat-mes-edit-btn",    // 편집
     ".cat-mes-trans-btn",   // 번역
     ".cat-mes-revert-btn",  // 복구
+    ".cat-mes-edit-btn",    // 편집
 ]
 
 function apply_button_order($buttons) {

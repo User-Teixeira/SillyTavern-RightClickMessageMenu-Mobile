@@ -25,6 +25,7 @@
     align-items: center !important;
     justify-content: center !important;
     font-size: calc(var(--mainFontSize) * 1.1) !important;
+    height: 20px !important;
     line-height: 1 !important;
 }
 
