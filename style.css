@@ -19,16 +19,13 @@
     width: 30px;
 }
 
-/* Horizontal mode only - applies only here */
-#right_click_message_menu.right_click_message_menu_horizontal .cat-emoji-icon {
-    transform: translateY(-2px);
-}
-
-/* Vertical mode only - applies only here, uses ID for higher specificity to override horizontal rules */
-#right_click_message_menu.right_click_message_menu_vertical .right_click_message_menu_item .cat-emoji-icon {
-    width: 30px !important;
-    height: unset !important;
-    transform: translate(5px, 2px);
+#right_click_message_menu .cat-emoji-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: calc(var(--mainFontSize) * 1.1); !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
 }
 
 /*

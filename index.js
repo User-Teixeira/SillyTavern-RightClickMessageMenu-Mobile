@@ -242,6 +242,35 @@ const horizontal_menu_class = "right_click_message_menu_horizontal"
 const horizontal_item_class = "right_click_message_menu_item"
 const hide_buttons_class = "force_hidden"
 const menu_visible_class = "rcmm_visible"
+
+// Manually control the display order of specific buttons in the menu.
+// List CSS selectors here in the order you want THOSE buttons to appear -
+// any matched button gets pulled to the front, in this exact order.
+// Buttons not listed keep their normal relative order and are placed
+// after everything listed here.
+// Example: put the cat-translator's edit button first, then translate, then revert:
+const button_order_overrides = [
+    ".mes_edit",            // Edit (기본 연필)
+    ".cat-mes-edit-btn",    // 편집
+    ".cat-mes-trans-btn",   // 번역
+    ".cat-mes-revert-btn",  // 복구
+]
+
+function apply_button_order($buttons) {
+    if (button_order_overrides.length === 0) return $buttons
+    let rest = $buttons.toArray()
+    let matched = []
+
+    for (let selector of button_order_overrides) {
+        let idx = rest.findIndex(btn => $(btn).is(selector))
+        if (idx !== -1) {
+            matched.push(rest[idx])
+            rest.splice(idx, 1)
+        }
+    }
+    return $(matched.concat(rest))
+}
+
 const button_name_map = {  // mapping for some default button names
     "Exclude message from prompts": "Exclude from prompts"
 }
@@ -305,6 +334,8 @@ function get_buttons($message_div) {
     if ($extra.length > 0) {
         $buttons = $($extra.toArray().concat($buttons.toArray()))
     }
+
+    $buttons = apply_button_order($buttons)
 
     return $buttons
 }
