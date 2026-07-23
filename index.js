@@ -297,6 +297,15 @@ function get_buttons($message_div) {
         debug('Failed to located edit button: ', $buttons)
     }
 
+    // Also pick up buttons added by other extensions outside of ".mes_buttons",
+    // e.g. the "cat-btn-group" translate/revert/edit buttons (cat-mes-trans-btn,
+    // cat-mes-revert-btn, cat-mes-edit-btn, ...). Anything with the "interactable"
+    // class inside a ".cat-btn-group" container on this message will be included.
+    let $extra = $message_div.find(".cat-btn-group .interactable")
+    if ($extra.length > 0) {
+        $buttons = $($buttons.toArray().concat($extra.toArray()))
+    }
+
     return $buttons
 }
 function get_edit_buttons($message_div) {
@@ -430,8 +439,10 @@ function update_menu(message_div, edit=false) {
     for (let button of $buttons) {
         let $button = $(button)
 
-        // Don't add the button if it's hidden on the message
+        // Don't add the button if it's hidden on the message (either via display:none
+        // or via opacity, which is how e.g. cat-mes-edit-btn hides itself conditionally)
         if ($button.css('display') === 'none') continue
+        if (parseFloat($button.css('opacity')) === 0) continue
 
         let icon_classes = [...button.classList].filter(cls => cls.startsWith('fa-'))  // get any FA classes (the icon)
         let $icon_svg = $button.find("svg")  // icons might have been added using an svg
@@ -443,6 +454,11 @@ function update_menu(message_div, edit=false) {
                 icon_classes = [...$icon_i[0].classList].filter(cls => cls.startsWith('fa-'))
             }
         }
+        // Emoji-based icons, e.g. <span class="cat-emoji-icon">🐱</span>, have no FA
+        // classes and no <svg>/<i>, so fall back to grabbing that emoji text directly.
+        let $emoji_icon = (icon_classes.length === 0 && $icon_svg.length === 0)
+            ? $button.find(".cat-emoji-icon").first()
+            : $()
 
         let tooltip = $button.prop('title') || $button.attr('data-sttt--title')  // the tooltip on the button (with compatability for the tooltips ext)
 
@@ -456,6 +472,8 @@ function update_menu(message_div, edit=false) {
 
         if ($icon_svg.length) {
              $menu_item.prepend($icon_svg.clone())
+        } else if ($emoji_icon.length) {  // emoji icon (e.g. cat-emoji-icon)
+             $menu_item.prepend($emoji_icon.clone())
         } else {  // regular fa icon
              $menu_item.prepend($(`<i class="${icon_classes.join(" ")}"></i>`))
         }
