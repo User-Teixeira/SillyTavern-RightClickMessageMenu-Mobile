@@ -15,7 +15,7 @@
 }
 
 .right_click_message_menu_vertical .right_click_message_menu_item i,
-#right_click_message_menu.right_click_message_menu_horizontal .cat-emoji-icon {
+#right_click_message_menu.right_click_message_menu_vertical .right_click_message_menu_item .cat-emoji-icon {
     height: unset;
     width: 30px;
 }
