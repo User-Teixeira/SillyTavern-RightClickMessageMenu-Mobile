@@ -26,7 +26,10 @@
     justify-content: center !important;
     font-size: calc(var(--mainFontSize) * 1.1) !important;
     line-height: 1 !important;
-    height: 20px !important;
+}
+
+#right_click_message_menu.right_click_message_menu_horizontal .cat-emoji-icon {
+    line-height: normal !important;
 }
 
 /*
