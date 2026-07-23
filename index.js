@@ -303,7 +303,7 @@ function get_buttons($message_div) {
     // class inside a ".cat-btn-group" container on this message will be included.
     let $extra = $message_div.find(".cat-btn-group .interactable")
     if ($extra.length > 0) {
-        $buttons = $($buttons.toArray().concat($extra.toArray()))
+        $buttons = $($extra.toArray().concat($buttons.toArray()))
     }
 
     return $buttons
